@@ -3281,45 +3281,35 @@ function ResultScreen({
   const runAi = async () => {
     setAiLoading(true);
     setAiError(null);
-    try {
+    const body = {
+      profile,
+      scores: { potential, evidence: ev.score, readiness, grade: grade.grade, confidence: conf.score },
+      dimScores: dimScores.map(d => ({ id: d.id, name: d.name, raw: d.raw })),
+      evidence: (evidence || []).map(e => ({ claim: e.claim, level: e.level }))
+    };
+    const callStep = async (stepNo) => {
       const resp = await fetch("/.netlify/functions/analyze", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          profile,
-          scores: {
-            potential,
-            evidence: ev.score,
-            readiness,
-            grade: grade.grade,
-            confidence: conf.score
-          },
-          dimScores: dimScores.map(d => ({
-            id: d.id,
-            name: d.name,
-            raw: d.raw
-          })),
-          evidence: (evidence || []).map(e => ({
-            claim: e.claim,
-            level: e.level
-          }))
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Object.assign({}, body, { step: stepNo }))
       });
       const data = await resp.json();
-      if (!resp.ok) {
-        setAiError(data.error || `오류(${resp.status})가 발생했습니다.`);
-        setAiLoading(false);
-        return;
-      }
-      if (data.ok && data.analysis) {
-        setAi(data.analysis);
-      } else {
-        setAiError("예상치 못한 응답 형식입니다.");
+      if (!resp.ok) throw new Error(data.error || ("\uc624\ub958(" + resp.status + ")"));
+      return data.analysis || {};
+    };
+    try {
+      // 1\ub2e8\uacc4: \uc885\ud569\u00b7\uc2dc\uc7a5\u00b7\uc804\ubb38\uac00\u00b7\uad00\uc810
+      const a1 = await callStep(1);
+      setAi(a1);
+      // 2\ub2e8\uacc4: \uc601\uc5ed\ubcc4 \ucf54\uba58\ud2b8\u00b7\uac1c\uc120\uc810 (\uc774\uc5b4\uc11c \ud638\ucd9c, \uc2e4\ud328\ud574\ub3c4 1\ub2e8\uacc4\ub294 \uc720\uc9c0)
+      try {
+        const a2 = await callStep(2);
+        setAi(Object.assign({}, a1, { dimensions: (a2 && a2.dimensions) || [] }));
+      } catch (e2) {
+        // 2\ub2e8\uacc4 \uc2e4\ud328\ub294 \uce58\uba85\uc801\uc774\uc9c0 \uc54a\uc74c \u2014 1\ub2e8\uacc4 \uacb0\uacfc\ub294 \uadf8\ub300\ub85c \ud45c\uc2dc
       }
     } catch (e) {
-      setAiError("네트워크 오류 또는 함수가 배포되지 않았습니다. Netlify Functions와 환경변수 설정을 확인하세요.");
+      setAiError(String(e.message || e) + " \u2014 \ub2e4\uc2dc \uc2dc\ub3c4\ud574 \uc8fc\uc138\uc694. (\ubb38\uc81c \uc9c0\uc18d \uc2dc Netlify \ud568\uc218\u00b7\ud658\uacbd\ubcc0\uc218 \ud655\uc778)");
     }
     setAiLoading(false);
   };

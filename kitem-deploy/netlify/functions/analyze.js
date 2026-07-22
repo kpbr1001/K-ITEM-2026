@@ -30,20 +30,15 @@ exports.handler = async (event) => {
 3) 근거가 약하면 약하다고 정직하게. 낙관 편향 경계.
 4) 반드시 아래 JSON만 출력. 마크다운·설명·인사말 금지. 모든 코멘트는 아이템 맥락에 구체적으로.
 
-출력 JSON 스키마:
+출력 JSON 스키마(각 항목 최대한 간결하게, 반드시 완결된 JSON):
 {
-  "summary": "종합 심층 분석 4문장. 세 축 관계·현재 국면·가장 중요한 다음 과제.",
-  "dimensions": [ {"id":"P1","comment":"이 영역 맞춤 해석 1~2문장","improve":["맞춤 개선점1","2"]} ],
-  "market": {
-    "overview":"시장·산업 맥락 정성 서술 2~3문장(숫자 없이)",
-    "drivers":["기회요인1","2"],
-    "risks":["위협·장벽1","2"],
-    "checklist":["직접 조사할 항목1","2","3"]
-  },
-  "perspectives": [ {"who":"투자","comment":"2문장"},{"who":"컨설턴트","comment":"2문장"},{"who":"창업자","comment":"2문장"} ],
-  "expert": "전문가 심화 코멘트 3~4문장. 핵심 성패 요인·흔한 실패 패턴·지금 집중할 지점."
+  "summary": "종합 분석 3문장. 세 축 관계·현재 국면·핵심 과제.",
+  "dimensions": [ {"id":"P1","comment":"1문장 맞춤 해석","improve":["개선점1","개선점2"]} ],
+  "market": { "overview":"시장 맥락 2문장(숫자 없이)", "drivers":["기회1","기회2"], "risks":["위협1","위협2"], "checklist":["조사항목1","2","3"] },
+  "perspectives": [ {"who":"투자","comment":"1~2문장"},{"who":"컨설턴트","comment":"1~2문장"},{"who":"창업자","comment":"1~2문장"} ],
+  "expert": "전문가 코멘트 3문장. 성패 요인·실패 패턴·집중 지점."
 }
-dimensions에는 점수가 있는 영역(${ratedIds})만 포함. improve는 각 영역 2개, 아이템에 맞게 간결·구체적으로. 전체적으로 간결하게 작성해 빠르게 응답하세요.`;
+dimensions는 점수 있는 영역(${ratedIds})만, improve는 각 2개. 전체를 매우 간결히 써서 JSON이 잘리지 않고 완결되게 하세요. 장황한 설명 금지.`;
 
   const userPrompt = `[아이템]
 기업: ${profile?.company || "미입력"}
@@ -71,7 +66,7 @@ ${evText}
       headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
       body: JSON.stringify({
         model: "claude-haiku-4-5",
-        max_tokens: 2400,
+        max_tokens: 3000,
         system: systemPrompt,
         messages: [{ role: "user", content: userPrompt }],
       }),
@@ -91,13 +86,25 @@ ${evText}
 
     const data = await resp.json();
     const text = (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("\n").trim();
-    let parsed = null;
     const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+
+    // 1) 정상 파싱 시도
+    let parsed = null;
     try { parsed = JSON.parse(cleaned); }
     catch { const s = cleaned.indexOf("{"), e = cleaned.lastIndexOf("}"); if (s !== -1 && e !== -1 && e > s) { try { parsed = JSON.parse(cleaned.slice(s, e + 1)); } catch { parsed = null; } } }
-
     if (parsed && parsed.summary) return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: parsed }) };
-    return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: { summary: text || "분석 결과가 비어 있습니다.", dimensions: [], perspectives: [] } }) };
+
+    // 2) 파싱 실패(대개 응답이 잘림) — summary 값만이라도 정규식으로 추출
+    let summaryOnly = "";
+    const m = cleaned.match(/"summary"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+    if (m && m[1]) summaryOnly = m[1].replace(/\\n/g, " ").replace(/\\"/g, '"').trim();
+
+    // 3) 그래도 없으면, JSON 흔적을 제거한 평문만 노출 (원문 JSON 날것 방지)
+    if (!summaryOnly) {
+      summaryOnly = cleaned.replace(/[{}\[\]]/g, " ").replace(/"[a-zA-Z_]+"\s*:/g, " ").replace(/"/g, "").replace(/\s+/g, " ").trim();
+      if (summaryOnly.length > 600) summaryOnly = summaryOnly.slice(0, 600) + " …(분석이 길어 일부만 표시됩니다. 다시 분석을 눌러 재시도해 주세요.)";
+    }
+    return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: { summary: summaryOnly || "분석 결과를 불러오지 못했습니다. 다시 시도해 주세요.", dimensions: [], perspectives: [], truncated: true } }) };
   } catch (e) {
     clearTimeout(timer);
     if (e.name === "AbortError") return { statusCode: 504, headers: CORS, body: JSON.stringify({ error: "AI 응답이 지연되어 시간 초과됐습니다. 다시 시도해 주세요." }) };

@@ -49,7 +49,7 @@ ${evText}
       method: "POST",
       headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
       body: JSON.stringify({
-        model: "claude-3-5-haiku-20241022", // 빠른 모델로 504 방지
+        model: "claude-haiku-4-5", // 빠른 모델로 504 방지
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: "user", content: userPrompt }],

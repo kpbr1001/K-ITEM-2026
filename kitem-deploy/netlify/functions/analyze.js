@@ -6,6 +6,11 @@
 exports.handler = async (event) => {
   const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Allow-Methods": "POST, OPTIONS" };
   if (event.httpMethod === "OPTIONS") return { statusCode: 204, headers: CORS, body: "" };
+  // 상태 확인용 GET — 실제 Claude 호출 없이 함수 생존 + 키 설정 여부만 반환 (크레딧 미사용)
+  if (event.httpMethod === "GET") {
+    const hasKey = !!process.env.ANTHROPIC_API_KEY;
+    return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, ready: hasKey, service: "K-ITEM analyze", message: hasKey ? "AI 분석 사용 가능" : "API Key 미설정" }) };
+  }
   if (event.httpMethod !== "POST") return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: "POST만 허용됩니다." }) };
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -37,10 +42,11 @@ ${evText}`;
   if (step === 2) {
     systemPrompt = `${common}
 출력 스키마:
-{"dimensions":[{"id":"P1","comment":"1문장 맞춤 해석","improve":["개선점1","개선점2"]}]}
-점수 있는 영역(${ratedIds})만. 각 comment 1문장, improve 2개. 아이템 맥락 반영, 간결하게.`;
-    userPrompt = `${ctx}\n\n각 영역별 맞춤 코멘트와 개선점 2개씩을 지정 JSON으로만 응답.`;
-    maxTokens = 2000;
+{"dimensions":[{"id":"P1","comment":"1문장 맞춤 해석","improve":["개선점1","개선점2"]}],
+"actionplan":{"w4":[{"act":"4주 내 실행 행동(구체적)","metric":"측정 지표","goal":"성공 기준(수치)"}],"w8":[{"act":"","metric":"","goal":""}],"w12":[{"act":"","metric":"","goal":""}]}}
+점수 있는 영역(${ratedIds})만, 각 comment 1문장·improve 2개. actionplan은 이 아이템 맥락의 4주(즉시 검증)·8주(약점 보완)·12주(다음 관문) 실행계획으로 각 1~2개, 반드시 '무엇을·어떻게·성공기준(수치)'까지 구체적으로. 간결하게.`;
+    userPrompt = `${ctx}\n\n영역별 맞춤 코멘트·개선점과, 4·8·12주 구체 실행계획(actionplan)을 지정 JSON으로만 응답. 실행계획은 진단 약점과 준비단계를 반영해 실질적으로.`;
+    maxTokens = 2600;
   } else {
     systemPrompt = `${common}
 출력 스키마:

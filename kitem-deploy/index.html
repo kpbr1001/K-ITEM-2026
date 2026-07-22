@@ -22,6 +22,15 @@ html,body{margin:0;padding:0;}
 body{font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;}
 button,input,select{font-family:inherit;letter-spacing:-0.01em;}
 
+/* 가독성: 숫자는 등폭 정렬(표·게이지 % 정렬) */
+body{font-feature-settings:"tnum" 1, "kern" 1;text-rendering:optimizeLegibility;}
+/* 문단 기본 줄간격 넉넉하게 */
+p{line-height:1.7;}
+/* 큰 숫자·강조 텍스트 자간 살짝 좁게 (또렷하게) */
+h1,h2{letter-spacing:-0.03em;word-break:keep-all;line-height:1.35;}
+/* 한글 줄바꿈: 단어 단위로 (어절 중간에서 안 끊기게) */
+p,span,div,td,th,li{word-break:keep-all;}
+
 /* 토스풍 인터랙션 */
 button{transition:transform .12s ease, box-shadow .12s ease, background .15s ease, border-color .15s ease;}
 button:not(:disabled):active{transform:scale(0.97);}

@@ -20,10 +20,11 @@ body{font-family:Pretendard,-apple-system,BlinkMacSystemFont,'Segoe UI','Apple S
 button,input,select{font-family:inherit;}
 @media print {
   .no-print{display:none !important;}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
   body{background:#fff !important;}
   main{max-width:100% !important;padding:0 !important;}
-  header,footer{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   div[style*="border-radius"]{break-inside:avoid;}
+  @page{margin:12mm;}
 }
 </style>
 </head><body><div id="root"></div>
@@ -796,6 +797,13 @@ const gradeName = {
   G3: "문제/솔루션 재정의",
   G4: "보류",
   G5: "중단·대체 검토"
+};
+const gradeVerdict = {
+  G1: { label: "GO", color: "#0E9E7E" },
+  G2: { label: "GO (조건부)", color: "#2E5BFF" },
+  G3: { label: "PIVOT", color: "#E4632B" },
+  G4: { label: "HOLD", color: "#8A93A3" },
+  G5: { label: "STOP", color: "#D3303B" }
 };
 const gradeGuide = {
   G1: "반복 성장신호가 확인됐습니다. 확장 실행을 검토하세요.",
@@ -3313,7 +3321,13 @@ function ResultScreen({
     }
     setAiLoading(false);
   };
-  const savePdf = () => window.print();
+  const savePdf = () => {
+    if (!ai) {
+      const go = window.confirm("\uc544\uc9c1 AI \uc2ec\uce35 \ubd84\uc11d\uc744 \uc2e4\ud589\ud558\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.\n\nAI \ubd84\uc11d(\uc885\ud569\ud574\uc11d\u00b7\uc2dc\uc7a5\ubd84\uc11d\u00b7\uc804\ubb38\uac00 \ucf54\uba58\ud2b8\u00b7\uc601\uc5ed\ubcc4 \uac1c\uc120\uc810)\uc744 \uba3c\uc800 \uc2e4\ud589\ud558\uba74 PDF\uc5d0 \ud568\uaed8 \uc800\uc7a5\ub429\ub2c8\ub2e4.\n\n\uadf8\ub798\ub3c4 \uc9c0\uae08 \uc800\uc7a5\ud560\uae4c\uc694?");
+      if (!go) return;
+    }
+    setTimeout(function() { window.print(); }, 100);
+  };
   return /*#__PURE__*/React.createElement(Shell, {
     step: 4
   }, /*#__PURE__*/React.createElement("div", {
@@ -3348,7 +3362,27 @@ function ResultScreen({
   }, "🖨 PDF 저장"), /*#__PURE__*/React.createElement(Btn, {
     small: true,
     onClick: onRestart
-  }, isSample ? "직접 진단하기" : "새 진단"))), /*#__PURE__*/React.createElement(ConfidenceBanner, {
+  }, isSample ? "직접 진단하기" : "새 진단"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "linear-gradient(135deg,#1B2A4A,#2A3D63)",
+      borderRadius: 16,
+      padding: 24,
+      marginBottom: 16,
+      color: "#fff"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 11, fontWeight: 700, color: "#9DB0D4", marginBottom: 10, letterSpacing: 1 }
+  }, "EXECUTIVE SUMMARY \u00b7 \ud575\uc2ec \uc694\uc57d"), /*#__PURE__*/React.createElement("div", {
+    style: { display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 14 }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 15, fontWeight: 800, color: "#fff", background: gradeVerdict[grade.grade].color, padding: "6px 16px", borderRadius: 10, letterSpacing: 0.5 }
+  }, gradeVerdict[grade.grade].label), /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 17, fontWeight: 700 }
+  }, grade.grade + " \u00b7 " + gradeName[grade.grade])), /*#__PURE__*/React.createElement("div", {
+    style: { display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 14, fontSize: 13.5 }
+  }, /*#__PURE__*/React.createElement("span", null, "\uc0ac\uc5c5 \uc7a0\uc7ac\ub825 ", /*#__PURE__*/React.createElement("strong", { style: { fontSize: 18, color: "#7DA0FF" } }, potential)), /*#__PURE__*/React.createElement("span", null, "\uc99d\uac70 \uc2e0\ub8b0\ub3c4 ", /*#__PURE__*/React.createElement("strong", { style: { fontSize: 18, color: "#4FD1B0" } }, ev.score)), /*#__PURE__*/React.createElement("span", null, "\uc900\ube44\ub2e8\uacc4 ", /*#__PURE__*/React.createElement("strong", { style: { fontSize: 18, color: "#B39DFF" } }, "R" + readiness)), /*#__PURE__*/React.createElement("span", null, "\uc9c4\ub2e8\uc2e0\ub8b0\ub3c4 ", /*#__PURE__*/React.createElement("strong", { style: { fontSize: 18, color: "#FFD27D" } }, conf.score))), /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 13, lineHeight: 1.6, color: "#DCE4F2", borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 12 }
+  }, /*#__PURE__*/React.createElement("strong", { style: { color: "#fff" } }, "\uac00\uc7a5 \uba3c\uc800 \ud560 \uc77c: "), topActions[0] || READINESS_NEXT[readiness])), /*#__PURE__*/React.createElement(ConfidenceBanner, {
     conf: conf,
     band: cBand,
     sample: sample
@@ -3475,7 +3509,17 @@ function ResultScreen({
       fontSize: 16,
       fontWeight: 700
     }
-  }, gradeName[grade.grade]), conf.score < 45 && /*#__PURE__*/React.createElement("span", {
+  }, gradeName[grade.grade]), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      fontWeight: 800,
+      color: "#fff",
+      background: gradeVerdict[grade.grade].color,
+      padding: "4px 12px",
+      borderRadius: 8,
+      letterSpacing: 0.5
+    }
+  }, gradeVerdict[grade.grade].label), conf.score < 45 && /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 11.5,
       fontWeight: 700,

@@ -49,8 +49,8 @@ ${evText}
       method: "POST",
       headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
       body: JSON.stringify({
-        model: "claude-haiku-4-5", // 빠른 모델로 504 방지
-        max_tokens: 1500,
+        model: "claude-haiku-4-5", // 현행 Haiku (빠르고 저렴)
+        max_tokens: 2000,
         system: systemPrompt,
         messages: [{ role: "user", content: userPrompt }],
       }),
@@ -70,10 +70,22 @@ ${evText}
 
     const data = await resp.json();
     const text = (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("\n").trim();
-    let parsed;
-    try { parsed = JSON.parse(text.replace(/```json/gi, "").replace(/```/g, "").trim()); }
-    catch { return { statusCode: 200, headers: CORS, body: JSON.stringify({ raw: text, parseError: true }) }; }
-    return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: parsed }) };
+    // JSON 추출 강화: 코드펜스 제거 + 첫 { 부터 마지막 } 까지만 파싱
+    let parsed = null;
+    const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      const s = cleaned.indexOf("{"), e = cleaned.lastIndexOf("}");
+      if (s !== -1 && e !== -1 && e > s) {
+        try { parsed = JSON.parse(cleaned.slice(s, e + 1)); } catch { parsed = null; }
+      }
+    }
+    if (parsed && parsed.summary) {
+      return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: parsed }) };
+    }
+    // 파싱 실패 시에도 원문을 summary로 담아 최소한 보여줌
+    return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: { summary: text || "분석 결과가 비어 있습니다.", dimensions: [], perspectives: [] } }) };
   } catch (e) {
     clearTimeout(timer);
     if (e.name === "AbortError") return { statusCode: 504, headers: CORS, body: JSON.stringify({ error: "AI 응답이 지연되어 시간 초과됐습니다. 다시 시도해 주세요." }) };

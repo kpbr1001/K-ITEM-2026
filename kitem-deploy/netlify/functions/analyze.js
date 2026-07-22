@@ -32,18 +32,18 @@ exports.handler = async (event) => {
 
 출력 JSON 스키마:
 {
-  "summary": "종합 심층 분석 4~5문장. 세 축 관계·현재 국면·가장 중요한 다음 과제.",
-  "dimensions": [ {"id":"P1","comment":"이 영역 맞춤 해석 2문장","improve":["맞춤 개선점1","2","3"]} ],
+  "summary": "종합 심층 분석 4문장. 세 축 관계·현재 국면·가장 중요한 다음 과제.",
+  "dimensions": [ {"id":"P1","comment":"이 영역 맞춤 해석 1~2문장","improve":["맞춤 개선점1","2"]} ],
   "market": {
-    "overview":"시장·산업 맥락 정성 서술 3문장(숫자 없이)",
+    "overview":"시장·산업 맥락 정성 서술 2~3문장(숫자 없이)",
     "drivers":["기회요인1","2"],
     "risks":["위협·장벽1","2"],
-    "checklist":["직접 조사할 항목1(예: OO 시장규모를 통계청/보고서로 확인)","2","3"]
+    "checklist":["직접 조사할 항목1","2","3"]
   },
-  "perspectives": [ {"who":"투자","comment":"2~3문장"},{"who":"컨설턴트","comment":"2~3문장"},{"who":"창업자","comment":"2~3문장"} ],
-  "expert": "전문가 심화 코멘트 4~5문장. 이 아이템의 핵심 성패 요인과 흔한 실패 패턴, 지금 집중할 지점을 컨설턴트 시각에서."
+  "perspectives": [ {"who":"투자","comment":"2문장"},{"who":"컨설턴트","comment":"2문장"},{"who":"창업자","comment":"2문장"} ],
+  "expert": "전문가 심화 코멘트 3~4문장. 핵심 성패 요인·흔한 실패 패턴·지금 집중할 지점."
 }
-dimensions에는 점수가 있는 영역(${ratedIds})만 포함. improve는 각 영역 2~3개, 아이템에 맞게 구체적으로.`;
+dimensions에는 점수가 있는 영역(${ratedIds})만 포함. improve는 각 영역 2개, 아이템에 맞게 간결·구체적으로. 전체적으로 간결하게 작성해 빠르게 응답하세요.`;
 
   const userPrompt = `[아이템]
 기업: ${profile?.company || "미입력"}
@@ -63,7 +63,7 @@ ${evText}
 위 진단을 해석해 지정된 JSON으로만 응답하세요. 특히 이 아이템(${profile?.oneLiner || ""})의 산업·고객 맥락을 반영해 구체적으로.`;
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 24000);
+  const timer = setTimeout(() => controller.abort(), 25000);
 
   try {
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
@@ -71,7 +71,7 @@ ${evText}
       headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
       body: JSON.stringify({
         model: "claude-haiku-4-5",
-        max_tokens: 3000,
+        max_tokens: 2400,
         system: systemPrompt,
         messages: [{ role: "user", content: userPrompt }],
       }),

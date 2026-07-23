@@ -1391,261 +1391,77 @@ function ProfileScreen({
   onNext,
   onBack
 }) {
-  const ready = profile.stage && profile.industry && profile.company && profile.oneLiner;
-  const inp = {
-    width: "100%",
-    padding: 12,
-    fontSize: 15,
-    border: `1px solid ${T.line}`,
-    borderRadius: 8,
-    boxSizing: "border-box"
+  const ready = profile.company && profile.stage && profile.industry && profile.oneLiner;
+  const inp = { width: "100%", padding: 12, fontSize: 15, border: "1px solid " + T.line, borderRadius: 10, boxSizing: "border-box" };
+  const lbl = { fontSize: 13, color: T.inkSoft, display: "block" };
+  const sub = { fontSize: 11, color: T.inkSoft };
+  const Field = function(label, hint, key, ph, mb) {
+    return /*#__PURE__*/React.createElement("div", { style: { marginBottom: mb === undefined ? 14 : mb } },
+      /*#__PURE__*/React.createElement("label", { style: lbl }, label, hint ? /*#__PURE__*/React.createElement("span", { style: sub }, " " + hint) : null),
+      /*#__PURE__*/React.createElement("input", {
+        value: profile[key] || "",
+        onChange: function(e) { var o = {}; o[key] = e.target.value; setProfile(Object.assign({}, profile, o)); },
+        placeholder: ph,
+        style: Object.assign({}, inp, { marginTop: 6 })
+      }));
   };
-  return /*#__PURE__*/React.createElement(Shell, {
-    step: 1
-  }, /*#__PURE__*/React.createElement("h2", {
-    style: {
-      fontSize: 22,
-      fontWeight: 800,
-      marginBottom: 4
-    }
-  }, "기업·아이템 프로필"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 14,
-      color: T.inkSoft,
-      marginBottom: 24
-    }
-  }, "단계와 업종에 따라 진단 문항이 달라집니다. 입력 정보는 AI 심층 분석의 맥락으로 활용됩니다."), /*#__PURE__*/React.createElement(Card, {
-    style: {
-      marginBottom: 16
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 14,
-      fontWeight: 700,
-      marginBottom: 12
-    }
-  }, "1. 창업 단계 ", /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: T.danger
-    }
-  }, "*")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 10,
-      flexWrap: "wrap"
-    }
-  }, STAGES.map(s => /*#__PURE__*/React.createElement("button", {
-    key: s.id,
-    onClick: () => setProfile({
-      ...profile,
-      stage: s.id
-    }),
-    style: {
-      flex: "1 1 180px",
-      textAlign: "left",
-      padding: 16,
-      borderRadius: 12,
-      cursor: "pointer",
-      border: `1.5px solid ${profile.stage === s.id ? T.potential : T.line}`,
-      background: profile.stage === s.id ? "#F0F4FF" : "#fff"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 15,
-      fontWeight: 700,
-      color: profile.stage === s.id ? T.potential : T.ink
-    }
-  }, s.label), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: T.inkSoft,
-      marginTop: 4
-    }
-  }, s.desc))))), /*#__PURE__*/React.createElement(Card, {
-    style: {
-      marginBottom: 16
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 14,
-      fontWeight: 700,
-      marginBottom: 12
-    }
-  }, "2. 주요 사업 유형 ", /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: T.danger
-    }
-  }, "*")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 8,
-      flexWrap: "wrap"
-    }
-  }, INDUSTRIES.map(s => /*#__PURE__*/React.createElement("button", {
-    key: s.id,
-    onClick: () => setProfile({
-      ...profile,
-      industry: s.id
-    }),
-    style: {
-      padding: "10px 16px",
-      borderRadius: 20,
-      cursor: "pointer",
-      fontSize: 13.5,
-      fontWeight: 600,
-      border: `1.5px solid ${profile.industry === s.id ? T.navy : T.line}`,
-      background: profile.industry === s.id ? T.navy : "#fff",
-      color: profile.industry === s.id ? "#fff" : T.ink
-    }
-  }, s.label)))), /*#__PURE__*/React.createElement(Card, {
-    style: {
-      marginBottom: 16
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 14,
-      fontWeight: 700,
-      marginBottom: 4
-    }
-  }, "3. 업종·업태 / 진입 산업"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: T.inkSoft,
-      marginBottom: 12
-    }
-  }, "입력 내용은 AI 심층 분석에서 산업 맥락 해석·시장 조사 방향 제시에 활용됩니다."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: 12
-    }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-    style: {
-      fontSize: 13,
-      color: T.inkSoft
-    }
-  }, "업종 / 업태 ", /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 11
-    }
-  }, "(현재 영위)")), /*#__PURE__*/React.createElement("input", {
-    value: profile.bizType,
-    onChange: e => setProfile({
-      ...profile,
-      bizType: e.target.value
-    }),
-    placeholder: "예: 정보통신업 / 소프트웨어 개발",
-    style: {
-      ...inp,
-      marginTop: 6
-    }
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-    style: {
-      fontSize: 13,
-      color: T.inkSoft
-    }
-  }, "진입하려는 산업 ", /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 11
-    }
-  }, "(신규)")), /*#__PURE__*/React.createElement("input", {
-    value: profile.targetIndustry,
-    onChange: e => setProfile({
-      ...profile,
-      targetIndustry: e.target.value
-    }),
-    placeholder: "예: 헬스케어 / 원격의료",
-    style: {
-      ...inp,
-      marginTop: 6
-    }
-  })))), /*#__PURE__*/React.createElement(Card, {
-    style: {
-      marginBottom: 16
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: { fontSize: 14, fontWeight: 700, marginBottom: 4 }
-  }, "4. \uace0\uac1d\u00b7\uacbd\uc7c1\u00b7\uac00\uc124 ", /*#__PURE__*/React.createElement("span", { style: { fontSize: 12, fontWeight: 400, color: T.inkSoft } }, "(\uc120\ud0dd \u2014 \uc785\ub825 \uc2dc AI \ubd84\uc11d\uc774 \ud6e8\uc52c \uad6c\uccb4\uc801\uc73c\ub85c)")), /*#__PURE__*/React.createElement("div", {
-    style: { fontSize: 12, color: T.inkSoft, marginBottom: 14 }
-  }, "\ube44\uc6cc\ub450\uc154\ub3c4 \ub418\uc9c0\ub9cc, \ucc44\uc6b0\uc2dc\uba74 AI\uac00 \uc2dc\uc7a5\u00b7\uacbd\uc7c1 \ubd84\uc11d\uc744 \ud6e8\uc52c \uc815\ubc00\ud558\uac8c \uc81c\uc2dc\ud569\ub2c8\ub2e4."), /*#__PURE__*/React.createElement("label", {
-    style: { fontSize: 13, color: T.inkSoft }
-  }, "\ubaa9\ud45c \uace0\uac1d ", /*#__PURE__*/React.createElement("span", { style: { fontSize: 11 } }, "(\ub204\uad6c\uc758 \uc5b4\ub5a4 \ubb38\uc81c\uc778\uac00)")), /*#__PURE__*/React.createElement("input", {
-    value: profile.targetCustomer,
-    onChange: e => setProfile({ ...profile, targetCustomer: e.target.value }),
-    placeholder: "\uc608: \uc9c1\uc6d0 10\uba85 \ubbf8\ub9cc \uc18c\uaddc\ubaa8 \uc81c\uc870\uc5c5\uccb4 \ub300\ud45c",
-    style: { ...inp, margin: "6px 0 14px" }
-  }), /*#__PURE__*/React.createElement("label", {
-    style: { fontSize: 13, color: T.inkSoft }
-  }, "\uc8fc\uc694 \uacbd\uc7c1\uc0ac\u00b7\ub300\uccb4\uc7ac ", /*#__PURE__*/React.createElement("span", { style: { fontSize: 11 } }, "(\uace0\uac1d\uc774 \uc9c0\uae08 \uc4f0\ub294 \ub300\uc548)")), /*#__PURE__*/React.createElement("input", {
-    value: profile.competitors,
-    onChange: e => setProfile({ ...profile, competitors: e.target.value }),
-    placeholder: "\uc608: A\uc0ac, B\uc11c\ube44\uc2a4 / \ub610\ub294 \uc218\uc791\uc5c5\u00b7\uc5d1\uc140\ub85c \ucc98\ub9ac",
-    style: { ...inp, margin: "6px 0 14px" }
-  }), /*#__PURE__*/React.createElement("label", {
-    style: { fontSize: 13, color: T.inkSoft }
-  }, "\uac00\uc7a5 \ud655\uc778\ud558\uace0 \uc2f6\uc740 \ud575\uc2ec \uac00\uc124 ", /*#__PURE__*/React.createElement("span", { style: { fontSize: 11 } }, "(\ub9de\ub294\uc9c0 \uac00\uc7a5 \ubd88\uc548\ud55c \uac83)")), /*#__PURE__*/React.createElement("input", {
-    value: profile.hypothesis,
-    onChange: e => setProfile({ ...profile, hypothesis: e.target.value }),
-    placeholder: "\uc608: \uc774 \uace0\uac1d\uc740 \uc6d4 5\ub9cc\uc6d0\uc744 \uc9c0\ubd88\ud560 \uac83\uc774\ub2e4",
-    style: { ...inp, marginTop: 6 }
-  })), /*#__PURE__*/React.createElement(Card, {
-    style: {
-      marginBottom: 24
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 14,
-      fontWeight: 700,
-      marginBottom: 12
-    }
-  }, "5. \uae30\ubcf8 \uc815\ubcf4 ", /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: T.danger
-    }
-  }, "*")), /*#__PURE__*/React.createElement("label", {
-    style: {
-      fontSize: 13,
-      color: T.inkSoft
-    }
-  }, "기업/팀 이름"), /*#__PURE__*/React.createElement("input", {
-    value: profile.company,
-    onChange: e => setProfile({
-      ...profile,
-      company: e.target.value
-    }),
-    placeholder: "예: 그로스벤처스",
-    style: {
-      ...inp,
-      margin: "6px 0 16px"
-    }
-  }), /*#__PURE__*/React.createElement("label", {
-    style: {
-      fontSize: 13,
-      color: T.inkSoft
-    }
-  }, "아이템 한 줄 설명 ", /*#__PURE__*/React.createElement("span", null, "(고객·문제·해결방식)")), /*#__PURE__*/React.createElement("input", {
-    value: profile.oneLiner,
-    onChange: e => setProfile({
-      ...profile,
-      oneLiner: e.target.value
-    }),
-    placeholder: "예: 소상공인이 세무처리에 겪는 어려움을 자동화로 해결",
-    style: {
-      ...inp,
-      marginTop: 6
-    }
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      justifyContent: "space-between"
-    }
-  }, /*#__PURE__*/React.createElement(Btn, {
-    onClick: onBack
-  }, "이전"), /*#__PURE__*/React.createElement(Btn, {
-    primary: true,
-    onClick: onNext,
-    disabled: !ready
-  }, "진단 문항으로 →")));
+  const CardTitle = function(n, title, req, desc) {
+    return /*#__PURE__*/React.createElement("div", { style: { marginBottom: desc ? 12 : 12 } },
+      /*#__PURE__*/React.createElement("div", { style: { fontSize: 14, fontWeight: 700, marginBottom: desc ? 4 : 0 } }, n + ". " + title, req ? /*#__PURE__*/React.createElement("span", { style: { color: T.danger } }, " *") : null),
+      desc ? /*#__PURE__*/React.createElement("div", { style: { fontSize: 12, color: T.inkSoft } }, desc) : null);
+  };
+  return /*#__PURE__*/React.createElement(Shell, { step: 1 },
+    /*#__PURE__*/React.createElement("h2", { style: { fontSize: 22, fontWeight: 800, marginBottom: 4 } }, "\uae30\uc5c5\u00b7\uc544\uc774\ud15c \ud504\ub85c\ud544"),
+    /*#__PURE__*/React.createElement("p", { style: { fontSize: 14, color: T.inkSoft, marginBottom: 24 } }, "\ub2e8\uacc4\uc640 \uc5c5\uc885\uc5d0 \ub530\ub77c \uc9c4\ub2e8 \ubb38\ud56d\uc774 \ub2ec\ub77c\uc9d1\ub2c8\ub2e4. \uc785\ub825 \uc815\ubcf4\ub294 AI \uc2ec\uce35 \ubd84\uc11d\uc758 \ub9e5\ub77d\uc73c\ub85c \ud65c\uc6a9\ub429\ub2c8\ub2e4."),
+
+    /* 1. 기업 기본정보 */
+    /*#__PURE__*/React.createElement(Card, { style: { marginBottom: 16 } },
+      CardTitle(1, "\uae30\uc5c5 \uae30\ubcf8\uc815\ubcf4", true),
+      Field("\uae30\uc5c5/\ud300 \uc774\ub984", "", "company", "\uc608: \uadf8\ub85c\uc2a4\ubca4\ucc98\uc2a4"),
+      Field("\uc9c0\uc5ed", "(\uc0ac\uc5c5\uc7a5 \uc18c\uc7ac\uc9c0)", "region", "\uc608: \uc11c\uc6b8 \uad6c\ub85c / \ucda9\ub0a8 \uc11c\ucc9c", 0)),
+
+    /* 2. 창업 단계 */
+    /*#__PURE__*/React.createElement(Card, { style: { marginBottom: 16 } },
+      CardTitle(2, "\ucc3d\uc5c5 \ub2e8\uacc4", true),
+      /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } },
+        STAGES.map(function(st) {
+          return /*#__PURE__*/React.createElement("button", {
+            key: st.id, onClick: function() { setProfile(Object.assign({}, profile, { stage: st.id })); },
+            style: { flex: "1 1 180px", textAlign: "left", padding: 16, borderRadius: 12, cursor: "pointer", border: "1.5px solid " + (profile.stage === st.id ? T.potential : T.line), background: profile.stage === st.id ? "#F0F4FF" : "#fff" }
+          }, /*#__PURE__*/React.createElement("div", { style: { fontSize: 15, fontWeight: 700, color: profile.stage === st.id ? T.potential : T.ink } }, st.label),
+             /*#__PURE__*/React.createElement("div", { style: { fontSize: 12, color: T.inkSoft, marginTop: 4 } }, st.desc));
+        }))),
+
+    /* 3. 주요 사업 유형 */
+    /*#__PURE__*/React.createElement(Card, { style: { marginBottom: 16 } },
+      CardTitle(3, "\uc8fc\uc694 \uc0ac\uc5c5 \uc720\ud615", true),
+      /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } },
+        INDUSTRIES.map(function(it) {
+          return /*#__PURE__*/React.createElement("button", {
+            key: it.id, onClick: function() { setProfile(Object.assign({}, profile, { industry: it.id })); },
+            style: { padding: "10px 16px", borderRadius: 20, cursor: "pointer", fontSize: 13.5, fontWeight: 600, border: "1.5px solid " + (profile.industry === it.id ? T.navy : T.line), background: profile.industry === it.id ? T.navy : "#fff", color: profile.industry === it.id ? "#fff" : T.ink }
+          }, it.label);
+        }))),
+
+    /* 4. 업종·업태 / 진입 산업 */
+    /*#__PURE__*/React.createElement(Card, { style: { marginBottom: 16 } },
+      CardTitle(4, "\uc5c5\uc885\u00b7\uc5c5\ud0dc / \uc9c4\uc785 \uc0b0\uc5c5", false, "AI\uac00 \uc0b0\uc5c5 \ub9e5\ub77d\uc744 \ud574\uc11d\ud558\uace0 \uc2dc\uc7a5 \uc870\uc0ac \ubc29\ud5a5\uc744 \uc81c\uc2dc\ud558\ub294 \ub370 \uc4f0\uc785\ub2c8\ub2e4."),
+      /*#__PURE__*/React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 } },
+        /*#__PURE__*/React.createElement("div", null, Field("\uc5c5\uc885 / \uc5c5\ud0dc", "(\ud604\uc7ac \uc601\uc704)", "bizType", "\uc608: \uc815\ubcf4\ud1b5\uc2e0\uc5c5 / \uc18c\ud504\ud2b8\uc6e8\uc5b4 \uac1c\ubc1c", 0)),
+        /*#__PURE__*/React.createElement("div", null, Field("\uc9c4\uc785\ud558\ub824\ub294 \uc0b0\uc5c5", "(\uc2e0\uaddc)", "targetIndustry", "\uc608: \ud5ec\uc2a4\ucf00\uc5b4 / \uc6d0\uaca9\uc758\ub8cc", 0)))),
+
+    /* 5. 아이템 */
+    /*#__PURE__*/React.createElement(Card, { style: { marginBottom: 24 } },
+      CardTitle(5, "\uc544\uc774\ud15c", true, "\ubb38\uc81c\uc640 \ud574\uacb0\ubc29\uc2dd\uc744 \uba3c\uc800 \uc815\uc758\ud558\uace0, \uace0\uac1d\u00b7\uacbd\uc7c1\u00b7\uac00\uc124\uc744 \ucc44\uc6b0\uba74 AI \ubd84\uc11d\uc774 \ud6e8\uc52c \uad6c\uccb4\uc801\uc785\ub2c8\ub2e4."),
+      Field("\uc544\uc774\ud15c \ud55c \uc904 \uc815\uc758 *", "(\uace0\uac1d\u00b7\ubb38\uc81c\u00b7\ud574\uacb0\ubc29\uc2dd)", "oneLiner", "\uc608: \uc18c\uc0c1\uacf5\uc778\uc774 \uc138\ubb34\ucc98\ub9ac\uc5d0 \uacaa\ub294 \uc5b4\ub824\uc6c0\uc744 \uc790\ub3d9\ud654\ub85c \ud574\uacb0"),
+      /*#__PURE__*/React.createElement("div", { style: { height: 1, background: T.line, margin: "4px 0 14px" } }),
+      Field("\ubaa9\ud45c \uace0\uac1d", "(\ub204\uad6c\uc758 \uc5b4\ub5a4 \ubb38\uc81c\uc778\uac00)", "targetCustomer", "\uc608: \uc9c1\uc6d0 10\uba85 \ubbf8\ub9cc \uc18c\uaddc\ubaa8 \uc81c\uc870\uc5c5\uccb4 \ub300\ud45c"),
+      Field("\uc8fc\uc694 \uacbd\uc7c1\uc0ac\u00b7\ub300\uccb4\uc7ac", "(\uace0\uac1d\uc774 \uc9c0\uae08 \uc4f0\ub294 \ub300\uc548)", "competitors", "\uc608: A\uc0ac, B\uc11c\ube44\uc2a4 / \ub610\ub294 \uc218\uc791\uc5c5\u00b7\uc5d1\uc140\ub85c \ucc98\ub9ac"),
+      Field("\uac00\uc7a5 \ud655\uc778\ud558\uace0 \uc2f6\uc740 \ud575\uc2ec \uac00\uc124", "(\ub9de\ub294\uc9c0 \uac00\uc7a5 \ubd88\uc548\ud55c \uac83)", "hypothesis", "\uc608: \uc774 \uace0\uac1d\uc740 \uc6d4 5\ub9cc\uc6d0\uc744 \uc9c0\ubd88\ud560 \uac83\uc774\ub2e4", 0)),
+
+    /*#__PURE__*/React.createElement("div", { style: { display: "flex", justifyContent: "space-between" } },
+      /*#__PURE__*/React.createElement(Btn, { onClick: onBack }, "\uc774\uc804"),
+      /*#__PURE__*/React.createElement(Btn, { primary: true, onClick: onNext, disabled: !ready }, "\uc9c4\ub2e8 \ubb38\ud56d\uc73c\ub85c \u2192")));
 }
 function DiagnosisScreen({
   profile,
@@ -3463,21 +3279,31 @@ function ResultScreen({
       if (!resp.ok) throw new Error(data.error || ("\uc624\ub958(" + resp.status + ")"));
       return data.analysis || {};
     };
+    var merged = {};
+    var failed = [];
+    // 1\ub2e8\uacc4: \uc885\ud569\u00b7\uad00\uc810\u00b7\uc804\ubb38\uac00
     try {
-      // 1\ub2e8\uacc4: \uc885\ud569\u00b7\uc2dc\uc7a5\u00b7\uc804\ubb38\uac00\u00b7\uad00\uc810
       const a1 = await callStep(1);
-      setAi(a1);
-      // 2\ub2e8\uacc4: \uc601\uc5ed\ubcc4 \ucf54\uba58\ud2b8\u00b7\uac1c\uc120\uc810\u00b7\uc561\uc158\ud50c\ub79c
-      try {
-        const a2 = await callStep(2);
-        const dims = (a2 && a2.dimensions) || [];
-        setAi(Object.assign({}, a1, { dimensions: dims, actionplan: (a2 && a2.actionplan) || null }));
-        if (dims.length === 0) setAiError("\uc601\uc5ed\ubcc4 AI \ucf54\uba58\ud2b8 \uc0dd\uc131\uc774 \ube44\uc5c8\uc2b5\ub2c8\ub2e4. '\ub2e4\uc2dc \ubd84\uc11d'\uc744 \ub20c\ub7ec \uc7ac\uc2dc\ub3c4\ud574 \uc8fc\uc138\uc694.");
-      } catch (e2) {
-        setAiError("\uc601\uc5ed\ubcc4 \uc0c1\uc138 \ubd84\uc11d(2\ub2e8\uacc4)\uc774 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. \uc885\ud569\ubd84\uc11d\uc740 \ud45c\uc2dc\ub418\uc5c8\uc73c\ub2c8 '\ub2e4\uc2dc \ubd84\uc11d'\uc73c\ub85c \uc7ac\uc2dc\ub3c4\ud558\uc138\uc694.");
-      }
-    } catch (e) {
-      setAiError(String(e.message || e) + " \u2014 \ub2e4\uc2dc \uc2dc\ub3c4\ud574 \uc8fc\uc138\uc694. (\ubb38\uc81c \uc9c0\uc18d \uc2dc Netlify \ud568\uc218\u00b7\ud658\uacbd\ubcc0\uc218 \ud655\uc778)");
+      merged = Object.assign(merged, a1);
+      setAi(Object.assign({}, merged));
+    } catch (e) { failed.push("\uc885\ud569\ubd84\uc11d"); }
+    // 2\ub2e8\uacc4: \uc2dc\uc7a5\u00b7\uacbd\uc7c1
+    try {
+      const a2 = await callStep(2);
+      merged = Object.assign(merged, a2);
+      setAi(Object.assign({}, merged));
+    } catch (e) { failed.push("\uc2dc\uc7a5\u00b7\uacbd\uc7c1"); }
+    // 3\ub2e8\uacc4: \uc601\uc5ed\ubcc4\u00b7\uc2e4\ud589\uacc4\ud68d
+    try {
+      const a3 = await callStep(3);
+      merged = Object.assign(merged, a3);
+      setAi(Object.assign({}, merged));
+    } catch (e) { failed.push("\uc601\uc5ed\ubcc4\u00b7\uc2e4\ud589\uacc4\ud68d"); }
+
+    if (!merged.summary && failed.length === 3) {
+      setAiError("AI \ubd84\uc11d\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 '\ub2e4\uc2dc \ubd84\uc11d'\uc744 \ub20c\ub7ec \uc8fc\uc138\uc694.");
+    } else if (failed.length > 0) {
+      setAiError(failed.join(", ") + " \uc0dd\uc131\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. '\ub2e4\uc2dc \ubd84\uc11d'\uc73c\ub85c \uc7ac\uc2dc\ub3c4\ud558\uba74 \ucc44\uc6cc\uc9d1\ub2c8\ub2e4.");
     }
     setAiLoading(false);
   };
@@ -3499,19 +3325,27 @@ function ResultScreen({
       gap: 12,
       marginBottom: 20
     }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
-    style: {
-      fontSize: 22,
-      fontWeight: 800,
-      margin: 0
-    }
-  }, profile.company || "샘플 기업", " · 진단 결과"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 14,
-      color: T.inkSoft,
-      margin: "4px 0 0"
-    }
-  }, profile.oneLiner || "샘플 아이템")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", { style: { flex: "1 1 340px", minWidth: 280 } }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 11, fontWeight: 700, color: T.inkSoft, letterSpacing: 0.6, marginBottom: 8 }
+  }, "\uc9c4\ub2e8 \uacb0\uacfc \ubcf4\uace0\uc11c"), /*#__PURE__*/React.createElement("div", {
+    style: { background: T.surface, border: "1px solid " + T.line, borderRadius: 14, padding: "14px 16px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { display: "flex", alignItems: "center", gap: 8, marginBottom: profile.region ? 6 : 10, flexWrap: "wrap" }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 10.5, fontWeight: 700, color: T.potential, background: T.potential + "12", padding: "3px 8px", borderRadius: 6 }
+  }, "\uae30\uc5c5"), /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 19, fontWeight: 800, color: T.ink }
+  }, profile.company || "\uc0d8\ud50c \uae30\uc5c5"), profile.region ? /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 12, color: T.inkSoft }
+  }, "\ud83d\udccd " + profile.region) : null), /*#__PURE__*/React.createElement("div", {
+    style: { height: 1, background: T.line, margin: "10px 0" }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: { display: "flex", alignItems: "flex-start", gap: 8 }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 10.5, fontWeight: 700, color: T.evidence, background: T.evidence + "12", padding: "3px 8px", borderRadius: 6, flexShrink: 0, marginTop: 2 }
+  }, "\uc544\uc774\ud15c"), /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 13.5, color: T.ink, lineHeight: 1.6, fontWeight: 500 }
+  }, profile.oneLiner || "\uc0d8\ud50c \uc544\uc774\ud15c")))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 8
@@ -4070,6 +3904,7 @@ function App() {
     oneLiner: "",
     bizType: "",
     targetIndustry: "",
+    region: "",
     targetCustomer: "",
     competitors: "",
     hypothesis: ""
@@ -4086,7 +3921,8 @@ function App() {
       oneLiner: "",
       bizType: "",
       targetIndustry: "",
-      targetCustomer: "",
+      region: "",
+    targetCustomer: "",
       competitors: "",
       hypothesis: ""
     });

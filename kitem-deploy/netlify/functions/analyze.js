@@ -43,14 +43,22 @@ ${evText}`;
 
   let systemPrompt, userPrompt, maxTokens;
 
-  if (step === 3) {
-    // 3단계: 영역별 코멘트·개선점 + 실행계획
+  if (step === 4) {
+    // 4단계: 실행계획만
     systemPrompt = `${common}
 출력 스키마(반드시 완결된 JSON):
-{"dimensions":[{"id":"P1","comment":"1문장","improve":["개선점1","개선점2"]}],"actionplan":{"w4":[{"act":"행동","metric":"측정","goal":"목표"}],"w8":[{"act":"","metric":"","goal":""}],"w12":[{"act":"","metric":"","goal":""}]}}
-영역은 ${ratedIds}만. comment 1문장, improve 2개. actionplan은 각 1~2개. 매우 간결하게.`;
-    userPrompt = `${ctx}\n\n영역별 코멘트·개선점과 4·8·12주 실행계획을 JSON으로만.`;
-    maxTokens = 2600;
+{"actionplan":{"w4":[{"act":"행동","metric":"측정지표","goal":"성공기준"}],"w8":[{"act":"","metric":"","goal":""}],"w12":[{"act":"","metric":"","goal":""}]}}
+각 기간 1~2개. 이 아이템의 약점·준비단계를 반영해 '무엇을·어떻게·성공기준(수치)'까지 구체적으로. 간결하게.`;
+    userPrompt = `${ctx}\n\n4·8·12주 실행계획을 JSON으로만.`;
+    maxTokens = 1300;
+  } else if (step === 3) {
+    // 3단계: 영역별 코멘트·개선점만
+    systemPrompt = `${common}
+출력 스키마(반드시 완결된 JSON):
+{"dimensions":[{"id":"P1","comment":"1문장","improve":["개선점1","개선점2"]}]}
+영역은 ${ratedIds}만. comment 1문장(짧게), improve 2개(각 한 줄). 매우 간결하게, 반드시 완결.`;
+    userPrompt = `${ctx}\n\n영역별 맞춤 코멘트와 개선점을 JSON으로만.`;
+    maxTokens = 2400;
   } else if (step === 2) {
     // 2단계: 시장현황 + 경쟁구도
     systemPrompt = `${common}
@@ -103,6 +111,7 @@ ${evText}`;
 
     if (step === 2) return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: {} }) };
     if (step === 3) return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: { dimensions: [] } }) };
+    if (step === 4) return { statusCode: 200, headers: CORS, body: JSON.stringify({ ok: true, analysis: {} }) };
     let summaryOnly = "";
     const m = cleaned.match(/"summary"\s*:\s*"((?:[^"\\]|\\.)*)"/);
     if (m && m[1]) summaryOnly = m[1].replace(/\\n/g, " ").replace(/\\"/g, '"').trim();

@@ -3925,7 +3925,50 @@ const SAMPLE = {
   }],
   risks: []
 };
+function GateScreen({ onPass }) {
+  const [pw, setPw] = useState("");
+  const [err, setErr] = useState(false);
+  const submit = function() {
+    if (pw.trim().toUpperCase() === "BECONIC2026") { onPass(); }
+    else { setErr(true); setPw(""); }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: { background: T.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, fontFamily: "inherit" }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { width: "100%", maxWidth: 420 }
+  },
+    /*#__PURE__*/React.createElement("div", { style: { textAlign: "center", marginBottom: 26 } },
+      /*#__PURE__*/React.createElement("img", { src: GVEN_LOGO, alt: "\uadf8\ub85c\uc2a4\ubca4\ucc98\uc2a4", style: { width: 58, height: 58, objectFit: "contain", marginBottom: 14 } }),
+      /*#__PURE__*/React.createElement("div", { style: { fontSize: 19, fontWeight: 800, color: T.ink, marginBottom: 6 } }, "K-ITEM PMF LAB"),
+      /*#__PURE__*/React.createElement("div", { style: { fontSize: 13.5, color: T.inkSoft, lineHeight: 1.6 } }, "\ucc3d\uc5c5\uc544\uc774\ud15c \uc99d\uac70\uae30\ubc18 \uc9c4\ub2e8 \u00b7 \uadf8\ub85c\uc2a4\ubca4\ucc98\uc2a4")),
+    /*#__PURE__*/React.createElement(Card, { style: { padding: 26 } },
+      /*#__PURE__*/React.createElement("div", { style: { fontSize: 14, fontWeight: 700, marginBottom: 6 } }, "\uc811\uc18d \ube44\ubc00\ubc88\ud638"),
+      /*#__PURE__*/React.createElement("div", { style: { fontSize: 12.5, color: T.inkSoft, marginBottom: 16, lineHeight: 1.6 } }, "\uc0c1\ub2f4 \uace0\uac1d\u00b7\uc81c\ud734 \uae30\uad00\uc744 \uc704\ud55c \uc9c4\ub2e8 \ub3c4\uad6c\uc785\ub2c8\ub2e4. \uc548\ub0b4\ubc1b\uc73c\uc2e0 \ube44\ubc00\ubc88\ud638\ub97c \uc785\ub825\ud574 \uc8fc\uc138\uc694."),
+      /*#__PURE__*/React.createElement("input", {
+        type: "password", value: pw,
+        onChange: function(e) { setPw(e.target.value); setErr(false); },
+        onKeyDown: function(e) { if (e.key === "Enter") submit(); },
+        placeholder: "\ube44\ubc00\ubc88\ud638 \uc785\ub825",
+        autoFocus: true,
+        style: { width: "100%", padding: "13px 14px", fontSize: 15, border: "1.5px solid " + (err ? T.danger : T.line), borderRadius: 10, boxSizing: "border-box", marginBottom: err ? 8 : 16, letterSpacing: 2 }
+      }),
+      err ? /*#__PURE__*/React.createElement("div", {
+        style: { fontSize: 12.5, color: T.danger, marginBottom: 14 }
+      }, "\ube44\ubc00\ubc88\ud638\uac00 \uc62c\ubc14\ub974\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4. \ub2e4\uc2dc \ud655\uc778\ud574 \uc8fc\uc138\uc694.") : null,
+      /*#__PURE__*/React.createElement("button", {
+        onClick: submit,
+        style: { width: "100%", padding: "13px 0", fontSize: 15, fontWeight: 700, color: "#fff", background: T.potential, border: "none", borderRadius: 10, cursor: "pointer", boxShadow: "0 2px 8px rgba(49,130,246,0.25)" }
+      }, "\uc785\uc7a5\ud558\uae30"),
+      /*#__PURE__*/React.createElement("div", {
+        style: { fontSize: 11.5, color: T.inkSoft, marginTop: 16, paddingTop: 14, borderTop: "1px solid " + T.line, lineHeight: 1.6 }
+      }, "\ube44\ubc00\ubc88\ud638\uac00 \ud544\uc694\ud558\uc2dc\uba74 \uc5f0\ub77d\ud574 \uc8fc\uc138\uc694", /*#__PURE__*/React.createElement("br", null),
+        "070-4103-4177 \u00b7 start@gven.kr")),
+    /*#__PURE__*/React.createElement("div", {
+      style: { textAlign: "center", fontSize: 11, color: T.inkSoft, marginTop: 20, lineHeight: 1.6 }
+    }, "\uadf8\ub85c\uc2a4\ubca4\ucc98\uc2a4 \uc8fc\uc2dd\ud68c\uc0ac \u00b7 \uc911\uc18c\ubca4\ucc98\uae30\uc5c5\ubd80 \uc778\uc99d \uc911\uc18c\uae30\uc5c5\uc0c1\ub2f4\ud68c\uc0ac")));
+}
 function App() {
+  const [unlocked, setUnlocked] = useState(false);
   const [screen, setScreen] = useState("start");
   const [profile, setProfile] = useState({
     stage: "",
@@ -3970,6 +4013,7 @@ function App() {
     setIsSample(true);
     setScreen("result");
   };
+  if (!unlocked) return /*#__PURE__*/React.createElement(GateScreen, { onPass: function() { setUnlocked(true); } });
   if (screen === "start") return /*#__PURE__*/React.createElement(StartScreen, {
     onStart: () => setScreen("profile"),
     onSample: loadSample

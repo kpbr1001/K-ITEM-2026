@@ -2169,49 +2169,31 @@ function GaugeAxisCard({
     }
   }, caption));
 }
-function Bar({
-  label,
-  value
-}) {
+function Bar({ label, value, avg }) {
   const shown = value == null;
   const color = shown ? T.line : value >= 70 ? T.good : value >= 50 ? T.potential : T.warn;
-  return /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginBottom: 11
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      justifyContent: "space-between",
-      fontSize: 13,
-      marginBottom: 5
-    }
-  }, /*#__PURE__*/React.createElement("span", null, label), /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: shown ? T.inkSoft : T.ink,
-      fontWeight: 600
-    }
-  }, shown ? "미확인" : value)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      height: 8,
-      background: T.chipBg,
-      borderRadius: 4,
-      overflow: "hidden"
-    }
-  }, !shown ? /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: `${value}%`,
-      height: "100%",
-      background: color,
-      borderRadius: 4
-    }
-  }) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: "100%",
-      height: "100%",
-      background: `repeating-linear-gradient(45deg,${T.line},${T.line} 4px,transparent 4px,transparent 8px)`
-    }
-  })));
+  return /*#__PURE__*/React.createElement("div", { style: { marginBottom: 11 } },
+    /*#__PURE__*/React.createElement("div", {
+      style: { display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 5 }
+    }, /*#__PURE__*/React.createElement("span", null, label),
+       /*#__PURE__*/React.createElement("span", { style: { color: shown ? T.inkSoft : T.ink, fontWeight: 600 } }, shown ? "\ubbf8\ud655\uc778" : value)),
+    /*#__PURE__*/React.createElement("div", {
+      style: { position: "relative", height: 8, background: T.chipBg, borderRadius: 4, overflow: "visible" }
+    },
+      /* \ub9c9\ub300 */
+      shown
+        ? /*#__PURE__*/React.createElement("div", { style: { width: "100%", height: "100%", borderRadius: 4, background: "repeating-linear-gradient(45deg," + T.line + "," + T.line + " 4px,transparent 4px,transparent 8px)" } })
+        : /*#__PURE__*/React.createElement("div", { style: { width: value + "%", height: "100%", background: color, borderRadius: 4 } }),
+      /* \ud3c9\uade0\uc120 */
+      (avg != null) ? /*#__PURE__*/React.createElement("div", {
+        title: "\ud3c9\uade0 " + avg + "\uc810",
+        style: { position: "absolute", left: avg + "%", top: -3, width: 2, height: 14, background: T.inkSoft, opacity: 0.55, borderRadius: 1 }
+      }) : null,
+      /* 70\uc810 \ubaa9\ud45c\uc120 */
+      /*#__PURE__*/React.createElement("div", {
+        title: "\ubaa9\ud45c 70\uc810",
+        style: { position: "absolute", left: "70%", top: -3, width: 2, height: 14, background: T.good, opacity: 0.75, borderRadius: 1 }
+      })));
 }
 function ReadinessTrack({
   current
@@ -2643,22 +2625,28 @@ function DimensionSection({
       color: T.inkSoft,
       marginBottom: 16
     }
-  }, "점수가 낮거나 미확인인 영역부터 표시합니다. ", aiDims && aiDims.length > 0 && /*#__PURE__*/React.createElement("span", {
+  }, "10\uac1c \uc601\uc5ed\uc744 \uc21c\uc11c\ub300\ub85c \ud45c\uc2dc\ud569\ub2c8\ub2e4. \uc544\ub798 \uc0c1\uc138 \ucf54\uba58\ud2b8\ub294 \uc810\uc218\uac00 \ub0ae\uc740 \uc21c\uc11c\uc785\ub2c8\ub2e4. ", aiDims && aiDims.length > 0 && /*#__PURE__*/React.createElement("span", {
     style: {
       color: T.ai,
       fontWeight: 600
     }
-  }, "· AI 맞춤 코멘트·개선점 적용됨")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginBottom: 18,
-      paddingBottom: 16,
-      borderBottom: `1px solid ${T.line}`
-    }
-  }, dimScores.map(d => /*#__PURE__*/React.createElement(Bar, {
-    key: d.id,
-    label: `${d.id} ${d.name}`,
-    value: d.raw
-  }))), sorted.map(d => {
+  }, "· AI 맞춤 코멘트·개선점 적용됨")), (function() {
+    var rated = dimScores.filter(function(d) { return d.raw != null; });
+    var avg = rated.length ? Math.round(rated.reduce(function(a, d) { return a + d.raw; }, 0) / rated.length) : null;
+    return /*#__PURE__*/React.createElement("div", {
+      style: { marginBottom: 18, paddingBottom: 16, borderBottom: "1px solid " + T.line }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: { display: "flex", gap: 14, flexWrap: "wrap", fontSize: 11, color: T.inkSoft, marginBottom: 12 }
+    }, avg != null ? /*#__PURE__*/React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 5 } },
+      /*#__PURE__*/React.createElement("span", { style: { width: 2, height: 11, background: T.inkSoft, opacity: 0.55, display: "inline-block" } }),
+      "\uc774 \uc544\uc774\ud15c \ud3c9\uade0 " + avg + "\uc810") : null,
+      /*#__PURE__*/React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 5 } },
+      /*#__PURE__*/React.createElement("span", { style: { width: 2, height: 11, background: T.good, opacity: 0.75, display: "inline-block" } }),
+      "\ubaa9\ud45c\uc120 70\uc810 (\uc591\ud638 \uae30\uc900)")),
+      dimScores.map(function(d) {
+        return /*#__PURE__*/React.createElement(Bar, { key: d.id, label: d.id + " " + d.name, value: d.raw, avg: avg });
+      }));
+  })(), sorted.map(d => {
     const ins = DIM_INSIGHTS[d.id];
     const isUnknown = d.raw == null;
     const level = isUnknown ? "unknown" : d.raw >= 70 ? "high" : d.raw >= 45 ? "mid" : "low";
@@ -2933,7 +2921,7 @@ function PerspectivePanel({
       color: T.inkSoft,
       marginBottom: 14
     }
-  }, "각 제언은 진단 점수·준비단계·격차에 근거해 생성됩니다."), /*#__PURE__*/React.createElement("div", {
+  }, hasAI ? "AI가 이 아이템의 맥락과 진단 결과를 함께 해석해 생성했습니다." : "\uc9c4\ub2e8 \uc810\uc218\u00b7\uc900\ube44\ub2e8\uacc4\u00b7\uaca9\ucc28\uc5d0 \uadfc\uac70\ud574 \uc790\ub3d9 \uc0dd\uc131\ub41c \uc81c\uc5b8\uc785\ub2c8\ub2e4."), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "column",
@@ -3125,7 +3113,9 @@ function AiAnalysisPanel({
         key: i,
         style: { fontSize: 10.5, fontWeight: 600, padding: "3px 8px", borderRadius: 6, color: it[1] ? T.good : T.inkSoft, background: it[1] ? T.good + "15" : T.chipBg }
       }, (it[1] ? "\u2713 " : "\u2013 ") + it[0]);
-    })));
+    })), /*#__PURE__*/React.createElement("div", {
+      style: { fontSize: 10.5, color: T.inkSoft, marginTop: 10, paddingTop: 8, borderTop: "1px solid " + T.line, lineHeight: 1.55 }
+    }, "\u26a0\ufe0f AI \ubd84\uc11d\uc740 \uc785\ub825\ud558\uc2e0 \uc815\ubcf4\ub97c \ud574\uc11d\ud55c \uacb0\uacfc\ub85c, \uc0ac\uc2e4\uacfc \ub2e4\ub974\uac70\ub098 \ub9e5\ub77d\uc744 \uc798\ubabb \uc9da\uc744 \uc218 \uc788\uc2b5\ub2c8\ub2e4. \uc911\uc694\ud55c \ud310\ub2e8\uc740 \ubc18\ub4dc\uc2dc \uc9c1\uc811 \ud655\uc778\ud558\uc138\uc694."));
   })())));
 }
 function buildInterpretation({
@@ -3253,6 +3243,8 @@ function ResultScreen({
   const [aiError, setAiError] = useState(null);
   const [ai, setAi] = useState(null); // { summary, dimensions, perspectives, market, expert }
   const [aiStatus, setAiStatus] = useState("checking");
+  const [consultNote, setConsultNote] = useState("");
+  const [consultEdit, setConsultEdit] = useState(false);
   useEffect(function() {
     var alive = true;
     fetch("/.netlify/functions/analyze", { method: "GET" }).then(function(r) {
@@ -3291,6 +3283,7 @@ function ResultScreen({
       const a1 = await callStep(1);
       merged = Object.assign(merged, a1);
       setAi(Object.assign({}, merged));
+      if (a1 && a1.consultant && !consultNote) setConsultNote(a1.consultant);
     } catch (e) { failed.push("\uc885\ud569\ubd84\uc11d"); }
     // 2\ub2e8\uacc4: \uc2dc\uc7a5\u00b7\uacbd\uc7c1
     try {
@@ -3730,7 +3723,35 @@ function ResultScreen({
                 it.goal ? /*#__PURE__*/React.createElement("span", null, "\ud83c\udfaf \ubaa9\ud45c: ", /*#__PURE__*/React.createElement("strong", { style: { color: w[3] } }, it.goal)) : null));
           }));
       }));
-  })(), /*#__PURE__*/React.createElement("div", { style: { background: "linear-gradient(135deg,#1B2A4A,#243758)", borderRadius: 16, padding: 24, marginBottom: 16, color: "#fff" }, className: "no-print" },
+  })(), /*#__PURE__*/React.createElement(Card, {
+    style: { marginBottom: 16, borderLeft: "4px solid " + T.navy, background: "#FCFCFD" }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 10 }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 13, fontWeight: 700 }
+  }, "\ud83e\uddd1\u200d\ud83d\udcbc \ucee8\uc124\ud134\ud2b8 \ucd1d\ud3c9"), (ai && ai.consultant && consultNote === ai.consultant) ? /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 10, fontWeight: 700, color: T.ai, background: T.ai + "12", padding: "2px 7px", borderRadius: 6, marginLeft: 6 }
+  }, "AI \ucd08\uc548") : null), /*#__PURE__*/React.createElement("button", {
+    onClick: function() { setConsultEdit(!consultEdit); }, className: "no-print",
+    style: { fontSize: 12, fontWeight: 600, color: T.potential, background: "none", border: "1px solid " + T.line, borderRadius: 8, padding: "5px 12px", cursor: "pointer" }
+  }, consultEdit ? "\uc800\uc7a5" : (consultNote ? "\uc218\uc815" : "\uc9c1\uc811 \uc791\uc131"))),
+    consultEdit
+      ? /*#__PURE__*/React.createElement("textarea", {
+          value: consultNote,
+          onChange: function(e) { setConsultNote(e.target.value); },
+          placeholder: "\ucee8\uc124\ud134\ud2b8 \uc758\uacac\uc744 \uc791\uc131\ud558\uc138\uc694. AI \ucd08\uc548\uc744 \uc218\uc815\ud558\uac70\ub098 \uc0c8\ub85c \uc4f8 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+          style: { width: "100%", minHeight: 110, padding: 12, fontSize: 13.5, lineHeight: 1.7, border: "1px solid " + T.line, borderRadius: 10, boxSizing: "border-box", resize: "vertical", fontFamily: "inherit" }
+        })
+      : (consultNote
+          ? /*#__PURE__*/React.createElement("div", {
+              style: { fontSize: 13.5, color: T.ink, lineHeight: 1.75, whiteSpace: "pre-wrap" }
+            }, consultNote)
+          : /*#__PURE__*/React.createElement("div", {
+              style: { fontSize: 12.5, color: T.inkSoft, lineHeight: 1.6 }
+            }, "AI \uc2ec\uce35 \ubd84\uc11d\uc744 \uc2e4\ud589\ud558\uba74 \ucd08\uc548\uc774 \uc0dd\uc131\ub418\uba70, '\uc9c1\uc811 \uc791\uc131'\uc73c\ub85c \ucee8\uc124\ud134\ud2b8 \uc758\uacac\uc744 \ub123\uc744 \uc218 \uc788\uc2b5\ub2c8\ub2e4.")),
+    consultNote && !consultEdit ? /*#__PURE__*/React.createElement("div", {
+      style: { fontSize: 11, color: T.inkSoft, marginTop: 12, paddingTop: 10, borderTop: "1px solid " + T.line }
+    }, "\uadf8\ub85c\uc2a4\ubca4\ucc98\uc2a4 \uc8fc\uc2dd\ud68c\uc0ac \u00b7 \uc911\uc18c\ubca4\ucc98\uae30\uc5c5\ubd80 \uc778\uc99d \uc911\uc18c\uae30\uc5c5\uc0c1\ub2f4\ud68c\uc0ac") : null), /*#__PURE__*/React.createElement("div", { style: { background: "linear-gradient(135deg,#1B2A4A,#243758)", borderRadius: 16, padding: 24, marginBottom: 16, color: "#fff" }, className: "no-print" },
     /*#__PURE__*/React.createElement("div", { style: { fontSize: 15, fontWeight: 800, marginBottom: 8 } }, "\ud83e\udd1d \ub2e4\uc74c \ub2e8\uacc4\ub97c \ud568\uaed8\ud558\uc138\uc694"),
     /*#__PURE__*/React.createElement("div", { style: { fontSize: 13, lineHeight: 1.6, color: "#DCE4F2", marginBottom: 16 } }, "\uc774 \uc9c4\ub2e8 \uacb0\uacfc\ub97c \ubc14\ud0d5\uc73c\ub85c \uc0ac\uc5c5\uacc4\ud68d\uc11c \uc791\uc131, \uc99d\uac70 \ud655\ubcf4 \uc804\ub7b5, \uc9c0\uc6d0\uc0ac\uc5c5 \uc5f0\uacc4, \uc0ac\uc5c5\ud654 \uc2e4\ud589\uae4c\uc9c0 \u2014 \uadf8\ub85c\uc2a4\ubca4\ucc98\uc2a4\uac00 \uc804\ubb38 \ucee8\uc124\ud305\uc73c\ub85c \ud568\uaed8\ud569\ub2c8\ub2e4."),
     /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 20, flexWrap: "wrap", fontSize: 13 } },

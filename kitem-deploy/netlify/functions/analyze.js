@@ -71,7 +71,7 @@ ${evText}`;
     // 1단계: 종합분석 + 관점별 + 전문가
     systemPrompt = `${common}
 출력 스키마(반드시 완결된 JSON):
-{"summary":"종합분석 3문장(세 축 관계·현재 국면·핵심 과제)","perspectives":[{"who":"투자","comment":"1~2문장"},{"who":"컨설턴트","comment":"1~2문장"},{"who":"창업자","comment":"1~2문장"}],"expert":"전문가 코멘트 3문장(성패요인·실패패턴·집중지점)"}
+{"summary":"종합분석 3문장(세 축 관계·현재 국면·핵심 과제)","perspectives":[{"who":"투자","comment":"1~2문장"},{"who":"컨설턴트","comment":"1~2문장"},{"who":"창업자","comment":"1~2문장"}],"expert":"전문가 코멘트 3문장(성패요인·실패패턴·집중지점)","consultant":"컨설턴트 총평 3~4문장. 중소기업 컨설턴트가 대표에게 직접 말하듯, 이 아이템의 현재 위치와 앞으로 3개월 집중할 것을 담백하게. 존댓말."}
 간결하게.`;
     userPrompt = `${ctx}\n\n이 아이템(${profile?.oneLiner || ""})의 맥락을 반영해 JSON으로만.`;
     maxTokens = 1400;

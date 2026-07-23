@@ -28,6 +28,9 @@ exports.handler = async (event) => {
   const ratedIds = rated.map((d) => d.id).join(", ");
   const evText = (evidence || []).length ? evidence.map((e) => `- ${e.claim} (${e.level})`).join("\n") : "(증거 없음)";
   const ctx = `[아이템] ${profile?.company || "미입력"} / ${profile?.oneLiner || "미입력"} / 단계:${profile?.stage || "?"} 유형:${profile?.industry || "?"} / 업종:${profile?.bizType || "-"} 진입산업:${profile?.targetIndustry || "-"}
+[목표고객] ${profile?.targetCustomer || "미입력"}
+[경쟁사·대체재] ${profile?.competitors || "미입력"}
+[핵심가설] ${profile?.hypothesis || "미입력"}
 [결과] 잠재력 ${scores.potential} · 증거 ${scores.evidence} · 준비단계 R${scores.readiness} · 등급 ${scores.grade} · 진단신뢰도 ${scores.confidence}
 [영역별 점수]
 ${dimText}
@@ -50,8 +53,8 @@ ${evText}`;
   } else {
     systemPrompt = `${common}
 출력 스키마:
-{"summary":"종합분석 3문장(세 축 관계·현재 국면·핵심 과제)","market":{"overview":"시장 맥락 2문장(숫자 없이)","drivers":["기회1","기회2"],"risks":["위협1","위협2"],"checklist":["조사항목1","2","3"]},"perspectives":[{"who":"투자","comment":"1~2문장"},{"who":"컨설턴트","comment":"1~2문장"},{"who":"창업자","comment":"1~2문장"}],"expert":"전문가 코멘트 3문장(성패요인·실패패턴·집중지점)"}
-간결하게, 완결된 JSON으로.`;
+{"summary":"종합분석 3문장(세 축 관계·현재 국면·핵심 과제)","market":{"overview":"시장 맥락 2문장(숫자 없이)","drivers":["기회1","기회2"],"risks":["위협1","위협2"],"checklist":["조사항목1","2","3"]},"competition":{"note":"경쟁 구도 2문장(입력된 경쟁사·대체재 반영, 없으면 이 업종의 일반적 대안 기준)","checklist":["경쟁사에 대해 확인할 항목1(예: 가격·기능 비교표 작성)","2","3"]},"perspectives":[{"who":"투자","comment":"1~2문장"},{"who":"컨설턴트","comment":"1~2문장"},{"who":"창업자","comment":"1~2문장"}],"expert":"전문가 코멘트 3문장(성패요인·실패패턴·집중지점)"}
+competition은 경쟁사 정보를 지어내지 말고 '무엇을 확인해야 하는지' 중심으로. 간결하게, 완결된 JSON으로.`;
     userPrompt = `${ctx}\n\n이 아이템(${profile?.oneLiner || ""})의 산업·고객 맥락을 반영해 지정 JSON으로만 응답.`;
     maxTokens = 1600;
   }

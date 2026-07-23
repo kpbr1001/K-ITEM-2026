@@ -72,7 +72,12 @@ html{scroll-behavior:smooth;}
   *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
   body{background:#fff !important;}
   main{max-width:100% !important;padding:0 !important;}
-  div[style*="border-radius"]{break-inside:avoid;}
+  /* 카드가 페이지 중간에서 잘리지 않게 */
+  div[style*="border-radius"]{break-inside:avoid;page-break-inside:avoid;}
+  /* 빈 요소로 생기는 공백 제거 */
+  div:empty{display:none !important;}
+  /* 그림자는 인쇄 시 불필요 */
+  div[style*="box-shadow"]{box-shadow:none !important;}
   @page{margin:12mm;}
 }
 </style>
@@ -3293,14 +3298,20 @@ function ResultScreen({
       merged = Object.assign(merged, a2);
       setAi(Object.assign({}, merged));
     } catch (e) { failed.push("\uc2dc\uc7a5\u00b7\uacbd\uc7c1"); }
-    // 3\ub2e8\uacc4: \uc601\uc5ed\ubcc4\u00b7\uc2e4\ud589\uacc4\ud68d
+    // 3\ub2e8\uacc4: \uc601\uc5ed\ubcc4 \ucf54\uba58\ud2b8\u00b7\uac1c\uc120\uc810
     try {
       const a3 = await callStep(3);
       merged = Object.assign(merged, a3);
       setAi(Object.assign({}, merged));
-    } catch (e) { failed.push("\uc601\uc5ed\ubcc4\u00b7\uc2e4\ud589\uacc4\ud68d"); }
+    } catch (e) { failed.push("\uc601\uc5ed\ubcc4 \ucf54\uba58\ud2b8"); }
+    // 4\ub2e8\uacc4: \uc2e4\ud589\uacc4\ud68d
+    try {
+      const a4 = await callStep(4);
+      merged = Object.assign(merged, a4);
+      setAi(Object.assign({}, merged));
+    } catch (e) { failed.push("\uc2e4\ud589\uacc4\ud68d"); }
 
-    if (!merged.summary && failed.length === 3) {
+    if (!merged.summary && failed.length >= 4) {
       setAiError("AI \ubd84\uc11d\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 '\ub2e4\uc2dc \ubd84\uc11d'\uc744 \ub20c\ub7ec \uc8fc\uc138\uc694.");
     } else if (failed.length > 0) {
       setAiError(failed.join(", ") + " \uc0dd\uc131\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. '\ub2e4\uc2dc \ubd84\uc11d'\uc73c\ub85c \uc7ac\uc2dc\ub3c4\ud558\uba74 \ucc44\uc6cc\uc9d1\ub2c8\ub2e4.");
@@ -3345,18 +3356,16 @@ function ResultScreen({
     style: { fontSize: 10.5, fontWeight: 700, color: T.evidence, background: T.evidence + "12", padding: "3px 8px", borderRadius: 6, flexShrink: 0, marginTop: 2 }
   }, "\uc544\uc774\ud15c"), /*#__PURE__*/React.createElement("span", {
     style: { fontSize: 13.5, color: T.ink, lineHeight: 1.6, fontWeight: 500 }
-  }, profile.oneLiner || "\uc0d8\ud50c \uc544\uc774\ud15c")))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 8
-    }
+  }, profile.oneLiner || "\uc0d8\ud50c \uc544\uc774\ud15c")), /*#__PURE__*/React.createElement("div", {
+    className: "no-print",
+    style: { display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 14, paddingTop: 12, borderTop: "1px solid " + T.line }
   }, /*#__PURE__*/React.createElement(Btn, {
     small: true,
     onClick: savePdf
-  }, "🖨 PDF 저장"), /*#__PURE__*/React.createElement(Btn, {
+  }, "\ud83d\udda8 PDF \uc800\uc7a5"), /*#__PURE__*/React.createElement(Btn, {
     small: true,
     onClick: onRestart
-  }, isSample ? "직접 진단하기" : "새 진단"))), /*#__PURE__*/React.createElement("div", {
+  }, isSample ? "\uc9c1\uc811 \uc9c4\ub2e8\ud558\uae30" : "\uc0c8 \uc9c4\ub2e8"))))), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "linear-gradient(135deg,#1B2A4A,#2A3D63)",
       borderRadius: 16,
@@ -3735,7 +3744,7 @@ const SAMPLE = {
   profile: {
     stage: "early",
     industry: "saas",
-    company: "샘플: 초기 SaaS",
+    company: "가온소프트 (샘플)",
     oneLiner: "중소기업 세무 자동화 (잠재력 높으나 증거 부족 케이스)",
     bizType: "정보통신업",
     targetIndustry: "핀테크·세무"

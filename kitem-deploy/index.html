@@ -1561,6 +1561,35 @@ function ProfileScreen({
     }
   })))), /*#__PURE__*/React.createElement(Card, {
     style: {
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 14, fontWeight: 700, marginBottom: 4 }
+  }, "4. \uace0\uac1d\u00b7\uacbd\uc7c1\u00b7\uac00\uc124 ", /*#__PURE__*/React.createElement("span", { style: { fontSize: 12, fontWeight: 400, color: T.inkSoft } }, "(\uc120\ud0dd \u2014 \uc785\ub825 \uc2dc AI \ubd84\uc11d\uc774 \ud6e8\uc52c \uad6c\uccb4\uc801\uc73c\ub85c)")), /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 12, color: T.inkSoft, marginBottom: 14 }
+  }, "\ube44\uc6cc\ub450\uc154\ub3c4 \ub418\uc9c0\ub9cc, \ucc44\uc6b0\uc2dc\uba74 AI\uac00 \uc2dc\uc7a5\u00b7\uacbd\uc7c1 \ubd84\uc11d\uc744 \ud6e8\uc52c \uc815\ubc00\ud558\uac8c \uc81c\uc2dc\ud569\ub2c8\ub2e4."), /*#__PURE__*/React.createElement("label", {
+    style: { fontSize: 13, color: T.inkSoft }
+  }, "\ubaa9\ud45c \uace0\uac1d ", /*#__PURE__*/React.createElement("span", { style: { fontSize: 11 } }, "(\ub204\uad6c\uc758 \uc5b4\ub5a4 \ubb38\uc81c\uc778\uac00)")), /*#__PURE__*/React.createElement("input", {
+    value: profile.targetCustomer,
+    onChange: e => setProfile({ ...profile, targetCustomer: e.target.value }),
+    placeholder: "\uc608: \uc9c1\uc6d0 10\uba85 \ubbf8\ub9cc \uc18c\uaddc\ubaa8 \uc81c\uc870\uc5c5\uccb4 \ub300\ud45c",
+    style: { ...inp, margin: "6px 0 14px" }
+  }), /*#__PURE__*/React.createElement("label", {
+    style: { fontSize: 13, color: T.inkSoft }
+  }, "\uc8fc\uc694 \uacbd\uc7c1\uc0ac\u00b7\ub300\uccb4\uc7ac ", /*#__PURE__*/React.createElement("span", { style: { fontSize: 11 } }, "(\uace0\uac1d\uc774 \uc9c0\uae08 \uc4f0\ub294 \ub300\uc548)")), /*#__PURE__*/React.createElement("input", {
+    value: profile.competitors,
+    onChange: e => setProfile({ ...profile, competitors: e.target.value }),
+    placeholder: "\uc608: A\uc0ac, B\uc11c\ube44\uc2a4 / \ub610\ub294 \uc218\uc791\uc5c5\u00b7\uc5d1\uc140\ub85c \ucc98\ub9ac",
+    style: { ...inp, margin: "6px 0 14px" }
+  }), /*#__PURE__*/React.createElement("label", {
+    style: { fontSize: 13, color: T.inkSoft }
+  }, "\uac00\uc7a5 \ud655\uc778\ud558\uace0 \uc2f6\uc740 \ud575\uc2ec \uac00\uc124 ", /*#__PURE__*/React.createElement("span", { style: { fontSize: 11 } }, "(\ub9de\ub294\uc9c0 \uac00\uc7a5 \ubd88\uc548\ud55c \uac83)")), /*#__PURE__*/React.createElement("input", {
+    value: profile.hypothesis,
+    onChange: e => setProfile({ ...profile, hypothesis: e.target.value }),
+    placeholder: "\uc608: \uc774 \uace0\uac1d\uc740 \uc6d4 5\ub9cc\uc6d0\uc744 \uc9c0\ubd88\ud560 \uac83\uc774\ub2e4",
+    style: { ...inp, marginTop: 6 }
+  })), /*#__PURE__*/React.createElement(Card, {
+    style: {
       marginBottom: 24
     }
   }, /*#__PURE__*/React.createElement("div", {
@@ -1569,7 +1598,7 @@ function ProfileScreen({
       fontWeight: 700,
       marginBottom: 12
     }
-  }, "4. 기본 정보 ", /*#__PURE__*/React.createElement("span", {
+  }, "5. \uae30\ubcf8 \uc815\ubcf4 ", /*#__PURE__*/React.createElement("span", {
     style: {
       color: T.danger
     }
@@ -1931,7 +1960,8 @@ function EvidenceScreen({
     level: "E2",
     directness: "stated",
     source: "user",
-    sample: "target"
+    sample: "target",
+    dim: ""
   });
   const add = () => {
     if (!draft.claim.trim()) return;
@@ -1941,6 +1971,7 @@ function EvidenceScreen({
       directness: draft.directness || "stated",
       source: draft.source || "user",
       sample: draft.sample || "target",
+      dim: draft.dim || "",
       recency: 1,
       importance: 2,
       id: Date.now()
@@ -1950,7 +1981,8 @@ function EvidenceScreen({
       level: "E2",
       directness: "stated",
       source: "user",
-      sample: "target"
+      sample: "target",
+      dim: ""
     });
   };
   const remove = id => setEvidence(evidence.filter(e => e.id !== id));
@@ -2049,7 +2081,13 @@ function EvidenceScreen({
       ...draft,
       sample: v
     })
-  })), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: { fontSize: 12, color: T.inkSoft, display: "block", marginBottom: 5 }
+  }, "\uad00\ub828 \uc601\uc5ed (\uc120\ud0dd)"), /*#__PURE__*/React.createElement("select", {
+    value: draft.dim,
+    onChange: e => setDraft({ ...draft, dim: e.target.value }),
+    style: { width: "100%", padding: 10, fontSize: 13, border: "1px solid " + T.line, borderRadius: 8, background: "#fff", boxSizing: "border-box" }
+  }, /*#__PURE__*/React.createElement("option", { value: "" }, "\u2014 \uc804\uccb4/\ubbf8\uc9c0\uc815"), DIMENSIONS.map(dm => /*#__PURE__*/React.createElement("option", { key: dm.id, value: dm.id }, dm.id + " " + dm.name))))), /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 14
     }
@@ -2103,7 +2141,7 @@ function EvidenceScreen({
       fontSize: 11,
       color: T.inkSoft
     }
-  }, e.level, " · ", (EV_DIRECT.find(x => x[0] === e.directness) || ["", "?"])[1], " · ", (EV_SOURCE.find(x => x[0] === e.source) || ["", "?"])[1], " · ", (EV_SAMPLE.find(x => x[0] === e.sample) || ["", "?"])[1])), /*#__PURE__*/React.createElement("button", {
+  }, e.level, " · ", (EV_DIRECT.find(x => x[0] === e.directness) || ["", "?"])[1], " · ", (EV_SOURCE.find(x => x[0] === e.source) || ["", "?"])[1], " · ", (EV_SAMPLE.find(x => x[0] === e.sample) || ["", "?"])[1], e.dim ? " · " + e.dim : "")), /*#__PURE__*/React.createElement("button", {
     onClick: () => remove(e.id),
     style: {
       background: "none",
@@ -3363,7 +3401,7 @@ function ResultScreen({
       profile,
       scores: { potential, evidence: ev.score, readiness, grade: grade.grade, confidence: conf.score },
       dimScores: dimScores.map(d => ({ id: d.id, name: d.name, raw: d.raw })),
-      evidence: (evidence || []).map(e => ({ claim: e.claim, level: e.level }))
+      evidence: (evidence || []).map(e => ({ claim: e.claim, level: e.level, dim: e.dim || "" }))
     };
     const callStep = async (stepNo) => {
       const resp = await fetch("/.netlify/functions/analyze", {
@@ -3546,7 +3584,49 @@ function ResultScreen({
     }
   }, line))), ai && ai.market && /*#__PURE__*/React.createElement(MarketAnalysisPanel, {
     market: ai.market
-  }), /*#__PURE__*/React.createElement(TransparencyPanel, {
+  }), ai && ai.competition && /*#__PURE__*/React.createElement(Card, {
+    style: { marginBottom: 16, borderLeft: "4px solid " + T.warn }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 13, fontWeight: 700, marginBottom: 4, color: T.warn }
+  }, "\u2694\ufe0f \uacbd\uc7c1 \uad6c\ub3c4 \ubd84\uc11d ", /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 10, fontWeight: 700, color: T.ai, background: T.ai + "12", padding: "2px 7px", borderRadius: 6, marginLeft: 4 }
+  }, "AI")), /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 11.5, color: T.inkSoft, marginBottom: 12 }
+  }, "\uacbd\uc7c1\uc0ac \uc815\ubcf4\ub97c \uc9c0\uc5b4\ub0b4\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4. \uc9c1\uc811 \ud655\uc778\ud574\uc57c \ud560 \ud56d\ubaa9\uc744 \uc81c\uc2dc\ud569\ub2c8\ub2e4."), ai.competition.note ? /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 13, color: T.ink, lineHeight: 1.65, marginBottom: 14, background: T.bg, padding: "12px 14px", borderRadius: 8 }
+  }, ai.competition.note) : null, (ai.competition.checklist || []).length > 0 ? /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 12, fontWeight: 700, color: T.navy, marginBottom: 8 }
+  }, "\ud83d\udd0e \uacbd\uc7c1 \uc870\uc0ac \uccb4\ud06c\ub9ac\uc2a4\ud2b8"), (ai.competition.checklist || []).map(function(x, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i, style: { fontSize: 12.5, color: T.inkSoft, lineHeight: 1.5, marginBottom: 5, display: "flex", gap: 8 }
+    }, /*#__PURE__*/React.createElement("span", { style: { color: T.warn, fontWeight: 700 } }, "\u25a1"), /*#__PURE__*/React.createElement("span", null, x));
+  })) : null), /*#__PURE__*/React.createElement(Card, {
+    style: { marginBottom: 16, borderLeft: "4px solid " + T.evidence }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 13, fontWeight: 700, marginBottom: 4 }
+  }, "\ud83d\udcd0 \uc2dc\uc7a5\uaddc\ubaa8 \uc0b0\uc815 \uc6cc\ud06c\uc2dc\ud2b8 (TAM \u00b7 SAM \u00b7 SOM)"), /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 11.5, color: T.inkSoft, marginBottom: 16, lineHeight: 1.6 }
+  }, "\uc218\uce58\ub97c \uc9c0\uc5b4\ub0b4\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4. \uc544\ub798 \uc0b0\uc815 \ubc29\ubc95\uc73c\ub85c \uc9c1\uc811 \uc870\uc0ac\ud574 \ucc44\uc6b0\uba74, \uadfc\uac70 \uc788\ub294 \uc2dc\uc7a5\uaddc\ubaa8\uac00 \ub098\uc635\ub2c8\ub2e4."), [
+    ["TAM", "\uc804\uccb4 \uc2dc\uc7a5", T.potential, "\uc774 \ubb38\uc81c\ub97c \uac00\uc9c4 \ubaa8\ub4e0 \uc7a0\uc7ac\uace0\uac1d \u00d7 \uc5f0\uac04 \uc9c0\ubd88\uc561", "\uc608: \uad6d\ub0b4 \ud574\ub2f9 \uc5c5\uc885 \uc0ac\uc5c5\uccb4 \uc218 \u00d7 \uac1d\ub2e8\uac00 (\ud1b5\uacc4\uccad\u00b7\uc5c5\uacc4\ubcf4\uace0\uc11c \ud655\uc778)"],
+    ["SAM", "\uc720\ud6a8 \uc2dc\uc7a5", T.evidence, "TAM \uc911 \uc6b0\ub9ac\uac00 \uc2e4\uc81c \uc81c\uacf5\u00b7\uc811\uadfc \uac00\ub2a5\ud55c \ubc94\uc704", "\uc608: \uc9c0\uc5ed\u00b7\ucc44\ub110\u00b7\uc138\uadf8\uba3c\ud2b8\ub85c \uc881\ud78c \ubd80\ubd84 \uc2dc\uc7a5"],
+    ["SOM", "\ud68d\ub4dd \uac00\ub2a5 \uc2dc\uc7a5", T.readiness, "SAM \uc911 1~3\ub144 \ub0b4 \ud604\uc2e4\uc801\uc73c\ub85c \ud68d\ub4dd \uac00\ub2a5\ud55c \ubaab", "\uc608: \uc6b0\ub9ac \uc601\uc5c5\ub825\u00b7\uc608\uc0b0\uc73c\ub85c \ub2ff\uc744 \uc218 \uc788\ub294 \uace0\uac1d \uc218"]
+  ].map(function(row) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: row[0], style: { padding: "12px 14px", marginBottom: 8, background: T.bg, borderRadius: 10, borderLeft: "3px solid " + row[2] }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: { fontSize: 13, fontWeight: 800, color: row[2] }
+    }, row[0]), /*#__PURE__*/React.createElement("span", {
+      style: { fontSize: 12.5, fontWeight: 600, color: T.ink }
+    }, row[1])), /*#__PURE__*/React.createElement("div", {
+      style: { fontSize: 12.5, color: T.ink, lineHeight: 1.5, marginBottom: 3 }
+    }, /*#__PURE__*/React.createElement("strong", null, "\uc0b0\uc815: "), row[3]), /*#__PURE__*/React.createElement("div", {
+      style: { fontSize: 11.5, color: T.inkSoft, lineHeight: 1.5 }
+    }, row[4]));
+  }), /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 11.5, color: T.inkSoft, marginTop: 10, padding: "10px 12px", background: "#FFFBF6", borderRadius: 8, lineHeight: 1.55 }
+  }, "\ud83d\udca1 TAM\ubcf4\ub2e4 ", /*#__PURE__*/React.createElement("strong", { style: { color: T.ink } }, "SOM\uc5d0 \uc9d1\uc911"), "\ud558\uc138\uc694. \ud070 \uc2dc\uc7a5\uc774 \uc544\ub2c8\ub77c '\uc9c0\uae08 \ub2ff\uc744 \uc218 \uc788\ub294 \uace0\uac1d'\uc774 \uc0ac\uc5c5\uc758 \uc2dc\uc791\uc785\ub2c8\ub2e4.")), /*#__PURE__*/React.createElement(TransparencyPanel, {
     dimScores: dimScores,
     stage: profile.stage,
     potential: potential,
@@ -3936,7 +4016,10 @@ function App() {
     company: "",
     oneLiner: "",
     bizType: "",
-    targetIndustry: ""
+    targetIndustry: "",
+    targetCustomer: "",
+    competitors: "",
+    hypothesis: ""
   });
   const [answers, setAnswers] = useState({});
   const [evidence, setEvidence] = useState([]);
@@ -3949,7 +4032,10 @@ function App() {
       company: "",
       oneLiner: "",
       bizType: "",
-      targetIndustry: ""
+      targetIndustry: "",
+      targetCustomer: "",
+      competitors: "",
+      hypothesis: ""
     });
     setAnswers({});
     setEvidence([]);
